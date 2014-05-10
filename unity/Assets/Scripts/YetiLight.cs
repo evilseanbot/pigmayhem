@@ -14,8 +14,13 @@ public class YetiLight : MonoBehaviour {
 	}
 
 	void OnTriggerStay2D(Collider2D collision) {
-		Debug.Log (collision.gameObject.GetComponent<SpriteRenderer> ().color);
-		gameObject.GetComponent<SpriteRenderer> ().color = collision.gameObject.GetComponent<SpriteRenderer> ().color;
+		if (collision.gameObject.tag == "light") {
+		    gameObject.GetComponent<SpriteRenderer> ().color = collision.gameObject.GetComponent<SpriteRenderer> ().color;
+		}
+
+		/*if (collision.gameObject.tag == 'exit') {
+
+		}*/
 	}
 
 	void OnTriggerExit2D() {
