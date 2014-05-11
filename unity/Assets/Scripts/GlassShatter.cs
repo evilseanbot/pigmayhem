@@ -4,6 +4,7 @@ using System.Collections;
 public class GlassShatter : MonoBehaviour {
 
 	public bool broken = false;
+	public AudioClip shatterSound;
 
 	// Use this for initialization
 	void Start () {
@@ -16,13 +17,17 @@ public class GlassShatter : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D collision) {
-		if (collision.gameObject.tag == "wall") {
+		if (collision.gameObject.tag == "wall" && !broken) {
 			broken = true;
-			gameObject.GetComponent<SpriteRenderer>().enabled = false;
+			AudioSource.PlayClipAtPoint (shatterSound, new Vector3(0, 0, 0));
+			gameObject.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0);
 			transform.FindChild ("YetiLightMask").gameObject.GetComponent<SpriteRenderer>().enabled = false;
 			transform.localRotation = Quaternion.Euler (0, 0, 0);
 			rigidbody2D.fixedAngle = true;
 			transform.FindChild ("BottomOfBottle").FindChild ("Glass Shatter").gameObject.GetComponent<ParticleSystem>().Play ();
+			gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+			rigidbody2D.velocity = new Vector2 (0, 0);
+			rigidbody2D.gravityScale = 0;
 		}
 	}
 }

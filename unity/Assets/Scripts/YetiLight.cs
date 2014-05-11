@@ -24,7 +24,7 @@ public class YetiLight : MonoBehaviour {
 	}
 
 	void OnTriggerExit2D() {
-		gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1);
+		gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 0);
 
 	}
 }
