@@ -7,10 +7,11 @@ public class Cauldron : MonoBehaviour {
 	public bool fadedOut = false;
 	// Use this for initialization
 
-	public GameObject smoke2;
-	public GameObject smoke1;
-	public GameObject smoke0;
+	//public GameObject smoke2;
+	//public GameObject smoke1;
+	//public GameObject smoke0;
 
+	public GameObject[] smoke;
 
 	void Start () {
 	
@@ -36,13 +37,21 @@ public class Cauldron : MonoBehaviour {
 	}
 
 	public void emitNumber() {
+		int bottlesLeft = 10 - bottlesAdded;
+
+		if (bottlesLeft >= 0 && bottlesLeft <= 9) {
+
+			Instantiate (smoke [bottlesLeft], new Vector3 (2.5f, -2f, 0), Quaternion.Euler (0, 0, 0));
+		}
+
+		/*
 		if (bottlesAdded == 1) {
-			Instantiate (smoke2, new Vector3 (2f, -1f, 0), Quaternion.Euler (0, 0, 0));
+			//Instantiate (smoke2, new Vector3 (2.5f, -2f, 0), Quaternion.Euler (0, 0, 0));
 		} else if (bottlesAdded == 2) {
-			Instantiate (smoke1, new Vector3 (2f, -1f, 0), Quaternion.Euler (0, 0, 0));
+			//Instantiate (smoke1, new Vector3 (2.5f, -2f, 0), Quaternion.Euler (0, 0, 0));
 		} else if (bottlesAdded == 3) {
-		Instantiate (smoke0, new Vector3 (2f, -1f, 0), Quaternion.Euler (0, 0, 0));
-	}
+		//Instantiate (smoke0, new Vector3 (2.5f, -2f, 0), Quaternion.Euler (0, 0, 0));
+		*/
 
 	}
 }

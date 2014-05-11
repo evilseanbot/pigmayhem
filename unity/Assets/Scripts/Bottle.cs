@@ -5,11 +5,13 @@ public class Bottle : MonoBehaviour {
 
 	public float fallDelay = 0.5f;
 	Vector3 cauldronPos;
-	bool dropping = false;
+	public bool dropping = false;
 	public bool thrown = false;
 	public bool magic;
 	public Color darkColor;
 	public Color lightColor;
+
+	public Sprite magicBottleSprite;
 
 	// Use this for initialization
 	void Start () {
@@ -17,7 +19,7 @@ public class Bottle : MonoBehaviour {
 
 		int magicFreq = (int) GameObject.Find ("BottleManager").GetComponent<BottleManager> ().magicFreq;
 
-		if (Random.Range (0, magicFreq+1) <= 1) {
+		if (Random.Range (0, magicFreq+1) <= 0) {
 			magic = true;
 		} else {
 			magic = false;
@@ -26,14 +28,16 @@ public class Bottle : MonoBehaviour {
 		if (magic) {
 			darkColor = new Color (0.06f, 0.06f, 0.25f);
 			lightColor = new Color (0.25f, 0.25f, 1);
+			gameObject.GetComponent<SpriteRenderer>().sprite = magicBottleSprite;
 		} else {
 			darkColor = new Color (0.12f, 0.06f, 0);
 			lightColor = new Color (0.5f, 0.25f, 0);
 		}
 
-		gameObject.GetComponent<SpriteRenderer> ().color = darkColor;
+		gameObject.GetComponent<SpriteRenderer> ().color = new Color (0.25f, 0.25f, 0.25f, 1f); //darkColor;
 		transform.FindChild ("BottomOfBottle").FindChild ("Glass Shatter").particleSystem.startColor = lightColor;
 
+		fallDelay = GameObject.Find ("ScreenShaker").GetComponent<ScreenShaker> ().timeTwirling;
 	}
 	
 	// Update is called once per frame
@@ -56,7 +60,7 @@ public class Bottle : MonoBehaviour {
 	public void drop() {
 		dropping = true;
 		gameObject.GetComponent<BoxCollider2D> ().enabled = true;
-		gameObject.GetComponent<SpriteRenderer> ().color = lightColor;
+		gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1); //lightColor;
 		//transform.FindChild ("YetiLightMask").GetComponent<SpriteRenderer> ().enabled = true;
 		transform.position = Vector3.MoveTowards (transform.position, 
 		                                          new Vector3 (transform.position.x, transform.position.y, transform.position.z-1f),
@@ -109,7 +113,9 @@ public class Bottle : MonoBehaviour {
 				GameObject screenShaker = GameObject.Find ("ScreenShaker");
 				screenShaker.GetComponent<ScreenShaker>().nextShakeMaxDelay /= 2f;
 				screenShaker.GetComponent<ScreenShaker>().nextShakeMinDelay /= 2f;
-				GameObject.Find ("BottleManager").GetComponent<BottleManager>().magicFreq *= 1.75f;
+				screenShaker.GetComponent<ScreenShaker>().timeTwirling /= 2f;
+
+				GameObject.Find ("BottleManager").GetComponent<BottleManager>().magicFreq *= 2f;
 
 
 				deleteBottle();

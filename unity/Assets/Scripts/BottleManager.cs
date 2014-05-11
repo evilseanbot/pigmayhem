@@ -28,15 +28,21 @@ public class BottleManager : MonoBehaviour {
 		foreach (GameObject i in bottles) {
 			if (!i.GetComponent<GlassShatter>().broken) {
 				if (i.GetComponent<Bottle>().magic == shouldBeMagic) {
-    				unbrokenBottles.Add(i);
+					if (i.GetComponent<Bottle>().dropping == false) {
+    				    unbrokenBottles.Add(i);
+					}
 				}
 			}
 		}
-		
-		int bottlePick = (int) Random.Range (0, unbrokenBottles.Count);
 
-		GameObject pickedBottle = (GameObject) unbrokenBottles[bottlePick];
-		pickedBottle.GetComponent<Bottle>().drop();
+		if (unbrokenBottles.Count > 0) {
+			
+						int bottlePick = (int)Random.Range (0, unbrokenBottles.Count);
+
+						GameObject pickedBottle = (GameObject)unbrokenBottles [bottlePick];
+						pickedBottle.GetComponent<Bottle> ().drop ();
+
+		}
 
 	}
 
@@ -56,7 +62,7 @@ public class BottleManager : MonoBehaviour {
 
 	public void spawnBottle() {
 		float xPos = Random.Range (-2.4f, 8.4f);
-		float yPos = Random.Range (-0.6f, 3.6f);
+	    float yPos = (float) (int) Random.Range (-1, 4);
 		
 		Instantiate (bottle, new Vector3(xPos, yPos, 1), Quaternion.Euler(0, 0, 0));
 	}

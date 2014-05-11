@@ -6,6 +6,7 @@ public class ScreenShaker : MonoBehaviour {
 	float timeForNextShake = 0;
 	public float nextShakeMinDelay = 0.5f;
 	public float nextShakeMaxDelay = 2f;
+	public float timeTwirling = 1f;
 
 	// Use this for initialization
 	void Start () {
@@ -13,9 +14,9 @@ public class ScreenShaker : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	    if (Time.time > timeForNextShake) {
-			timeForNextShake = Time.time + Random.Range (nextShakeMinDelay, nextShakeMaxDelay);
+	void FixedUpdate () {
+	    while (Time.time > timeForNextShake) {
+			timeForNextShake += Random.Range (nextShakeMinDelay, nextShakeMaxDelay);
 			//GameObject.Find ("Main Camera").animation.Play ();
 			GameObject.Find ("BottleManager").GetComponent<BottleManager>().drop();
 		}
