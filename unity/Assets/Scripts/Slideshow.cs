@@ -15,7 +15,7 @@ public class Slideshow : MonoBehaviour {
 	void Update () {
 	    if (Input.anyKeyDown) {
 			Invoke ("loadNextLevel", 2f);
-			Instantiate (fadeOut, new Vector3(0, 0, 0), Quaternion.Euler (0, 0, 0));
+			Instantiate (fadeOut, new Vector3(0, 0, -8f), Quaternion.Euler (0, 0, 0));
 		}
 	}
 

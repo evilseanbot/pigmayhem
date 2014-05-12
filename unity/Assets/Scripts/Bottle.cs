@@ -10,19 +10,28 @@ public class Bottle : MonoBehaviour {
 	public bool magic;
 	public Color darkColor;
 	public Color lightColor;
+	public float audioVolume;
 
+	public bool forceMagic;
 	public Sprite magicBottleSprite;
+	
+	public AudioClip collect;
 
 	// Use this for initialization
 	void Start () {
 		cauldronPos = GameObject.Find ("Cauldron").transform.position;
 
 		int magicFreq = (int) GameObject.Find ("BottleManager").GetComponent<BottleManager> ().magicFreq;
+		audioVolume = GameObject.Find ("BottleManager").GetComponent<BottleManager> ().bottleAudioVolume;
 
 		if (Random.Range (0, magicFreq+1) <= 0) {
 			magic = true;
 		} else {
 			magic = false;
+		}
+
+		if (forceMagic) {
+			magic = true;
 		}
 
 		if (magic) {
@@ -42,6 +51,8 @@ public class Bottle : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		//audioVolume = GameObject.Find ("BottleManager").GetComponent<BottleManager> ().bottleAudioVolume;
+
 		if (dropping) {
 			rigidbody2D.AddTorque (0.05f);
 
@@ -88,8 +99,10 @@ public class Bottle : MonoBehaviour {
 
 						rigidbody2D.AddTorque (-30f);
 						dropping = false;
+						rigidbody2D.velocity = new Vector2(0, 0);
 						rigidbody2D.AddForce (new Vector2(0, 250f));
 					} else {
+						//AudioSource.PlayClipAtPoint (collect, new Vector3(0, 0, -10), audioVolume/3f);
 						deleteBottle();
 					}
 				}
@@ -111,11 +124,20 @@ public class Bottle : MonoBehaviour {
 				GameObject.Find ("Main Camera").animation.Play ();
 
 				GameObject screenShaker = GameObject.Find ("ScreenShaker");
-				screenShaker.GetComponent<ScreenShaker>().nextShakeMaxDelay /= 2f;
-				screenShaker.GetComponent<ScreenShaker>().nextShakeMinDelay /= 2f;
-				screenShaker.GetComponent<ScreenShaker>().timeTwirling /= 2f;
+				screenShaker.GetComponent<ScreenShaker>().nextShakeMaxDelay /= 1.5f;
+				screenShaker.GetComponent<ScreenShaker>().nextShakeMinDelay /= 1.5f;
+				screenShaker.GetComponent<ScreenShaker>().timeTwirling /= 1.5f;
 
-				GameObject.Find ("BottleManager").GetComponent<BottleManager>().magicFreq *= 2f;
+				screenShaker.GetComponent<ScreenShaker>().playRumble();
+
+				GameObject.Find ("BottleManager").GetComponent<BottleManager>().magicFreq *= 1.5f;
+				GameObject.Find ("BottleManager").GetComponent<BottleManager>().bottleAudioVolume *= 0.80f;
+
+				int bottlesCollected = GameObject.Find ("Cauldron").GetComponent<Cauldron>().bottlesAdded;
+
+				if (bottlesCollected >= 10) {
+					GameObject.Find ("BottleManager").GetComponent<BottleManager>().isActive = false;
+				}
 
 
 				deleteBottle();
