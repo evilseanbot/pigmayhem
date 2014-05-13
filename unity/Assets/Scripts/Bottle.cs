@@ -20,42 +20,40 @@ public class Bottle : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		cauldronPos = GameObject.Find ("Cauldron").transform.position;
-
-		int magicFreq = (int) GameObject.Find ("BottleManager").GetComponent<BottleManager> ().magicFreq;
 		audioVolume = GameObject.Find ("BottleManager").GetComponent<BottleManager> ().bottleAudioVolume;
+		determineMagic ();
+		gameObject.GetComponent<SpriteRenderer> ().color = new Color (0.25f, 0.25f, 0.25f, 1f);
+		fallDelay = GameObject.Find ("ScreenShaker").GetComponent<ScreenShaker> ().timeTwirling;
+	}
+
+	void determineMagic() {
+		int magicFreq = (int) GameObject.Find ("BottleManager").GetComponent<BottleManager> ().magicFreq;
 
 		if (Random.Range (0, magicFreq+1) <= 0) {
 			magic = true;
 		} else {
 			magic = false;
 		}
-
+		
 		if (forceMagic) {
 			magic = true;
 		}
-
+		
 		if (magic) {
 			darkColor = new Color (0.06f, 0.06f, 0.25f);
-			lightColor = new Color (0.25f, 0.25f, 1);
-			gameObject.GetComponent<SpriteRenderer>().sprite = magicBottleSprite;
+			lightColor = new Color (0.25f, 0.25f, 1, 0.5f);
+			GetComponent<SpriteRenderer>().sprite = magicBottleSprite;
 		} else {
 			darkColor = new Color (0.12f, 0.06f, 0);
-			lightColor = new Color (0.5f, 0.25f, 0);
+			lightColor = new Color (0.5f, 0.25f, 0, 0.5f);
 		}
 
-		gameObject.GetComponent<SpriteRenderer> ().color = new Color (0.25f, 0.25f, 0.25f, 1f); //darkColor;
 		transform.FindChild ("BottomOfBottle").FindChild ("Glass Shatter").particleSystem.startColor = lightColor;
-
-		fallDelay = GameObject.Find ("ScreenShaker").GetComponent<ScreenShaker> ().timeTwirling;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		//audioVolume = GameObject.Find ("BottleManager").GetComponent<BottleManager> ().bottleAudioVolume;
-
+	void FixedUpdate () {
 		if (dropping) {
-			rigidbody2D.AddTorque (0.05f);
-
+			rigidbody2D.AddTorque (3f * Time.deltaTime);
 		}
 
 		if (thrown) {
@@ -63,19 +61,19 @@ public class Bottle : MonoBehaviour {
 	          new Vector3 (cauldronPos.x, transform.position.y, transform.position.z),
 	          0.1f);
 			rigidbody2D.AddTorque (-3f * Time.deltaTime);
-
 		}
 	
 	}
 
+	void enterForeground() {
+		GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1);
+		transform.Translate (0, 0, -1f);
+	}
+
 	public void drop() {
 		dropping = true;
-		gameObject.GetComponent<BoxCollider2D> ().enabled = true;
-		gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1); //lightColor;
-		//transform.FindChild ("YetiLightMask").GetComponent<SpriteRenderer> ().enabled = true;
-		transform.position = Vector3.MoveTowards (transform.position, 
-		                                          new Vector3 (transform.position.x, transform.position.y, transform.position.z-1f),
-		                                          1f);
+		GetComponent<BoxCollider2D> ().enabled = true;
+		enterForeground ();
 		Invoke ("fall", fallDelay);
 	}
 
@@ -88,19 +86,16 @@ public class Bottle : MonoBehaviour {
 			if (dropping && !thrown) {
 				if (!gameObject.GetComponent<GlassShatter>().broken) {
 					if (magic) {
-						transform.position = Vector3.MoveTowards (transform.position, 
-							new Vector3 (transform.position.x, transform.position.y+5f, transform.position.z),
-							1f);
+						transform.Translate(0, -5f, 0);
 
 						thrown = true;
-
-						//gameObject.GetComponent<BoxCollider2D>().enabled = false;
 						gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
 
 						rigidbody2D.AddTorque (-30f);
 						dropping = false;
 						rigidbody2D.velocity = new Vector2(0, 0);
-						rigidbody2D.AddForce (new Vector2(0, 250f));
+						rigidbody2D.AddForce (new Vector2(0, 500f));
+						rigidbody2D.gravityScale = 2;
 					} else {
 						//AudioSource.PlayClipAtPoint (collect, new Vector3(0, 0, -10), audioVolume/3f);
 						deleteBottle();
@@ -114,40 +109,43 @@ public class Bottle : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D collider) {
 		if (collider.gameObject.tag == "cauldron") {
 			if (thrown) {
+
 				GameObject.Find ("CauldronBubble").particleSystem.Play ();
-				GameObject cauldronLight = GameObject.Find ("CauldronLight");
-				cauldronLight.animation.Play ();
-				cauldronLight.transform.localScale = new Vector3(6,6, 1);
-				GameObject.Find ("Cauldron").GetComponent<Cauldron>().bottlesAdded += 1;
-				GameObject.Find ("Cauldron").GetComponent<Cauldron>().emitNumber();
+				//GameObject cauldronLight = GameObject.Find ("CauldronLight");
+				//cauldronLight.animation.Play ();
+				//cauldronLight.transform.localScale = new Vector3(6,6, 1);
+
+				Cauldron cauldron = GameObject.Find ("Cauldron").GetComponent<Cauldron>();
+				cauldron.bottlesAdded += 1;
+				cauldron.emitNumber();
 
 				GameObject.Find ("Main Camera").animation.Play ();
 
-				GameObject screenShaker = GameObject.Find ("ScreenShaker");
-				screenShaker.GetComponent<ScreenShaker>().nextShakeMaxDelay /= 1.5f;
-				screenShaker.GetComponent<ScreenShaker>().nextShakeMinDelay /= 1.5f;
-				screenShaker.GetComponent<ScreenShaker>().timeTwirling /= 1.5f;
+				ScreenShaker screenShaker = GameObject.Find ("ScreenShaker").GetComponent<ScreenShaker>();
+				screenShaker.shake();
 
-				screenShaker.GetComponent<ScreenShaker>().playRumble();
+				BottleManager bottleManager = GameObject.Find ("BottleManager").GetComponent<BottleManager>();
+				bottleManager.magicFreq *= 1.87f;
+				bottleManager.bottleAudioVolume *= 0.80f;
 
-				GameObject.Find ("BottleManager").GetComponent<BottleManager>().magicFreq *= 1.5f;
-				GameObject.Find ("BottleManager").GetComponent<BottleManager>().bottleAudioVolume *= 0.80f;
-
-				int bottlesCollected = GameObject.Find ("Cauldron").GetComponent<Cauldron>().bottlesAdded;
-
-				if (bottlesCollected >= 10) {
-					GameObject.Find ("BottleManager").GetComponent<BottleManager>().isActive = false;
-				}
-
+				turnOffBottlesIfWon(bottleManager, cauldron);
 
 				deleteBottle();
 			}
 		}
 	}
 
+	void turnOffBottlesIfWon(BottleManager bottleManager, Cauldron cauldron) {
+		int bottlesCollected = cauldron.bottlesAdded;
+		
+		if (bottlesCollected >= 10) {
+			bottleManager.isActive = false;
+		}
+
+	}
+
 	void deleteBottle() {
-		GameObject.Find ("BottleManager").GetComponent<BottleManager> ().spawnBottle ();
-		//GameObject.Find ("BottleManager").GetComponent<BottleManager> ().spawnBottle ();
+		GameObject.Find ("BottleManager").GetComponent<BottleManager> ().spawnBottle (false);
 		GameObject.Destroy (gameObject);
 	}
 }

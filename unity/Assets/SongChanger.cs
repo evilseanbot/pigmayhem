@@ -7,13 +7,10 @@ public class SongChanger : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		GameObject.Find ("SongPlayer").GetComponent<AudioSource> ().Stop ();
-		GameObject.Find ("SongPlayer").GetComponent<AudioSource> ().audio.clip = gameMusic;
-		GameObject.Find ("SongPlayer").GetComponent<AudioSource> ().Play ();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+		if (GameObject.Find ("SongPlayer") != null) {
+			GameObject.Find ("SongPlayer").GetComponent<AudioSource> ().Stop ();
+			GameObject.Find ("SongPlayer").GetComponent<AudioSource> ().audio.clip = gameMusic;
+			GameObject.Find ("SongPlayer").GetComponent<AudioSource> ().Play ();
+		}
+	}	
 }

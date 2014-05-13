@@ -5,17 +5,8 @@ public class Cauldron : MonoBehaviour {
 	public int bottlesAdded = 0;
 	public GameObject fadeOut;
 	public bool fadedOut = false;
-	// Use this for initialization
-
-	//public GameObject smoke2;
-	//public GameObject smoke1;
-	//public GameObject smoke0;
 
 	public GameObject[] smoke;
-
-	void Start () {
-	
-	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -30,9 +21,7 @@ public class Cauldron : MonoBehaviour {
 		Instantiate (fadeOut, new Vector3(0, 0, -5), Quaternion.Euler(0, 0, 0));
 	}
 
-
 	void loadNextLevel() {
-
 		Application.LoadLevel ("end");
 	}
 
@@ -41,17 +30,8 @@ public class Cauldron : MonoBehaviour {
 
 		if (bottlesLeft >= 0 && bottlesLeft <= 9) {
 
-			Instantiate (smoke [bottlesLeft], new Vector3 (2.5f, -2f, 0), Quaternion.Euler (0, 0, 0));
+			Instantiate (smoke [bottlesLeft], new Vector3 (transform.position.x, transform.position.y+0.5f, 0), Quaternion.Euler (0, 0, 0));
 		}
-
-		/*
-		if (bottlesAdded == 1) {
-			//Instantiate (smoke2, new Vector3 (2.5f, -2f, 0), Quaternion.Euler (0, 0, 0));
-		} else if (bottlesAdded == 2) {
-			//Instantiate (smoke1, new Vector3 (2.5f, -2f, 0), Quaternion.Euler (0, 0, 0));
-		} else if (bottlesAdded == 3) {
-		//Instantiate (smoke0, new Vector3 (2.5f, -2f, 0), Quaternion.Euler (0, 0, 0));
-		*/
 
 	}
 }

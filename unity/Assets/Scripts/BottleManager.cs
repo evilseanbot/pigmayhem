@@ -2,8 +2,6 @@
 using System.Collections;
 
 public class BottleManager : MonoBehaviour {
-	float timeForNextBottle = 0;
-	float nextBottleDelay = 0.5f;
 	public GameObject bottle;
 	public GameObject forceMagicBottle;
 	public float mundaneBottlesToGo = 2;
@@ -12,7 +10,6 @@ public class BottleManager : MonoBehaviour {
 	public float bottleAudioVolume = 1f;
 
 	
-	// Update is called once per frame
 	public void drop() {
 		GameObject[] bottles = GameObject.FindGameObjectsWithTag ("bottle");
 
@@ -45,36 +42,22 @@ public class BottleManager : MonoBehaviour {
 			GameObject pickedBottle = (GameObject)unbrokenBottles [bottlePick];
 			pickedBottle.GetComponent<Bottle> ().drop ();
 		} else if (shouldBeMagic) {
+			spawnBottle (true);
+		}
+
+	}
+	
+	public void spawnBottle(bool forceMagic) {
+		if (isActive) {
 			float xPos = Random.Range (-2.3f, 6.4f);
-			int shelf = (int) Random.Range (0, 3);
+			int shelf = (int)Random.Range (0, 3);
 			float yPos = 2.4f - ((float)shelf * 1.3f);
 
-			Instantiate (forceMagicBottle, new Vector3(xPos, yPos, 1), Quaternion.Euler(0, 0, 0));
-		}
-
-	}
-
-	void Update () {
-		/*
-		if (Time.time > timeForNextBottle) {
-			timeForNextBottle = Time.time + nextBottleDelay;
-
-			float xPos = Random.Range (-2.4f, 8.4f);
-			float yPos = Random.Range (-0.6f, 3.6f);
-
-			Instantiate (bottle, new Vector3(xPos, yPos, 1), Quaternion.Euler(0, 0, 0));
-		}
-		*/
-	
-	}
-
-	public void spawnBottle() {
-		if (isActive) {
-				float xPos = Random.Range (-2.3f, 6.4f);
-				int shelf = (int)Random.Range (0, 3);
-				float yPos = 2.4f - ((float)shelf * 1.3f);
-
+			if (forceMagic) {
+    			Instantiate (forceMagicBottle, new Vector3 (xPos, yPos, 1), Quaternion.Euler (0, 0, 0));
+			} else {
 				Instantiate (bottle, new Vector3 (xPos, yPos, 1), Quaternion.Euler (0, 0, 0));
+			}
 		}
 	}
 }

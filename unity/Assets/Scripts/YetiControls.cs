@@ -13,9 +13,13 @@ public class YetiControls : MonoBehaviour {
 
 	float progression = 0f;
 
+	SpriteRenderer headRenderer;
+	SpriteRenderer bodyRenderer;
+
 	// Use this for initialization
 	void Start () {
-	
+		headRenderer = transform.FindChild ("YetiHead").GetComponent<SpriteRenderer> ();
+		bodyRenderer = transform.FindChild ("YetiBody").GetComponent<SpriteRenderer> ();
 	}
 	
 	// Update is called once per frame
@@ -36,16 +40,14 @@ public class YetiControls : MonoBehaviour {
 			yVel = -thisWalkSpeed;
 		}
 
-		transform.position = Vector3.MoveTowards(transform.position, 
-			new Vector3(transform.position.x+xVel, transform.position.y+yVel, transform.position.z),
-			1f);
+		transform.Translate (xVel, yVel, 0);
 
 		if (xVel < 0) {
-			transform.FindChild ("YetiHead").GetComponent<SpriteRenderer>().sprite = leftHead;
+			headRenderer.sprite = leftHead;
 		} else if (xVel > 0) {
-			transform.FindChild ("YetiHead").GetComponent<SpriteRenderer>().sprite = rightHead;
+			headRenderer.sprite = rightHead;
 		} else {
-			transform.FindChild ("YetiHead").GetComponent<SpriteRenderer>().sprite = fowardHead;
+			headRenderer.sprite = fowardHead;
 		}
 
 		if (xVel != 0 || yVel != 0) {
@@ -57,10 +59,10 @@ public class YetiControls : MonoBehaviour {
 		progression += Time.deltaTime;
 
 		if (progression > 0.3f) {
-			transform.FindChild ("YetiBody").GetComponent<SpriteRenderer>().sprite = climbLeft;
+			bodyRenderer.sprite = climbLeft;
 			progression = 0;
 		} else if (progression > 0.15f) {
-			transform.FindChild ("YetiBody").GetComponent<SpriteRenderer>().sprite = climbRight;
+			bodyRenderer.sprite = climbRight;
 		}
 	}
 }
